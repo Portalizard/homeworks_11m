@@ -12,75 +12,92 @@
 #include <future>
 #include <chrono>
 
-// Не работает, но я не знаю почему //
 
 using namespace std;
 
-int n = 10;
-const int mod = 1e9 + 7;
-
-vector < int > storage;
-mt19937 rng;
-mutex m;
-//unique_lock<mutex> lk(m);
-condition_variable cv;
-condition_variable cv_r;
-int last_size = 0;
-int mx = -1;
-
-
-void writer()
+template < typename T >
+concept Req =
+requires (T a, T b)
 {
-    while(n != 0)
-    {
-        n--;
+	{a < b} -> std::same_as<bool>;
+};
 
-        unique_lock<mutex> lk(m);
-        cv_r.wait(lk);
-        //cout << "WRITE\n";
-        int r = rng() / mod;
-        cout << "r = " << r << "\n";
+template < typename T >
+requires Req<T>
+class Node
+{
+public:
+	T value;
+	Node<T>* left = nullptr;
+	Node<T>* right = nullptr;
 
-        storage.push_back(r);
-        lk.unlock();
-        cv.notify_all();
-        //cout << "END WRITE\n";
-    }
+	Node<T>(T val)
+	{
+		value = val;
+	}
+};
+
+template < typename T >
+void add(T x, Node<T>* root)
+{
+	if (root->value == x)
+	{
+		if (!root->right)
+		{
+			root->right = new T(x);
+			return;
+		}
+		add(x, root->right);
+		return;
+	}
+
+	if (x < root->value)
+	{
+		if (!root->left)
+		{
+			root->left = new T(x);
+			return;
+		}
+		add(x, root->left);
+		return;
+	}
+
+	if (x > root->value)
+	{
+		if (!root->right)
+		{
+			root->right = new T(x);
+			return;
+		}
+		add(x, root->right);
+		return;
+	}
 }
 
-void reader()
+template < typename T >
+bool find(T x, Node<T>* root)
 {
-    while (n != 0)
-    {
-        unique_lock<mutex> lk(m);
-        cv.wait(lk/*, [] { return last_size != storage.size(); }*/);
-        cout << "READ\n";
-        if (storage.size() == 0)
-        {
-            lk.unlock();
-            cv_r.notify_all();
-            continue;
-        }
-        if (storage[storage.size() - 1] > mx)
-        {
-            mx = storage[storage.size() - 1];
-            cout << "max = " << mx << "\n";
-            //cout << "MESSAGE\n";
-        }
-        last_size++;
-        lk.unlock();
-        cv_r.notify_all();
-    }
+	if (root->value == x)
+	{
+		return true;
+	}
+
+	if (x < root->value)
+	{
+		if (!root->left)
+			return false;
+		return find(x, root->left);
+	}
+	if (x > root->value)
+	{
+		if (!root->right)
+			return false;
+		return find(x, root->right);
+	}
 }
 
 
 int main()
 {
-    rng.seed(std::chrono::high_resolution_clock::now().time_since_epoch().count());
-    thread thr1(reader);
-    thread thr2(writer);
-    cv.notify_all();
-
-    thr1.join();
-    thr2.join();
+	
 }
