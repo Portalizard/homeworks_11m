@@ -15,30 +15,17 @@
 
 using namespace std;
 
-template < typename T >
-concept Addable =
-requires (T a, T b)
-{
-	a + b;
-};
 
 template < typename T >
-requires Addable<T>
-T sum(vector < T > a)
+T* alloc(T a)
 {
-	T sum = T();
-	
-	for (int i = 0; i < a.size(); i++)
-	{
-		sum += a[i];
-	}
-
-	return sum;
+	T* ptr = new T();
+	*ptr = a;
+	return ptr;
 }
 
 
 int main()
 {
-	vector < int > vec = { 1, 2, -3, 4, 5 };
-	std::cout << sum<int>(vec);
+	
 }

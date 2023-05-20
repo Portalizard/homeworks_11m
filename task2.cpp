@@ -15,89 +15,37 @@
 
 using namespace std;
 
-template < typename T >
-concept Req =
-requires (T a, T b)
-{
-	{a < b} -> std::same_as<bool>;
-};
 
 template < typename T >
-requires Req<T>
-class Node
+T sum(T a)
 {
-public:
-	T value;
-	Node<T>* left = nullptr;
-	Node<T>* right = nullptr;
-
-	Node<T>(T val)
-	{
-		value = val;
-	}
-};
-
-template < typename T >
-void add(T x, Node<T>* root)
-{
-	if (root->value == x)
-	{
-		if (!root->right)
-		{
-			root->right = new T(x);
-			return;
-		}
-		add(x, root->right);
-		return;
-	}
-
-	if (x < root->value)
-	{
-		if (!root->left)
-		{
-			root->left = new T(x);
-			return;
-		}
-		add(x, root->left);
-		return;
-	}
-
-	if (x > root->value)
-	{
-		if (!root->right)
-		{
-			root->right = new T(x);
-			return;
-		}
-		add(x, root->right);
-		return;
-	}
+	return a;
 }
 
 template < typename T >
-bool find(T x, Node<T>* root)
+T sum(vector<T> a)
 {
-	if (root->value == x)
+	T sum = T();
+	for (int i = 0; i < a.size(); i++)
 	{
-		return true;
+		sum += a[i];
 	}
-
-	if (x < root->value)
-	{
-		if (!root->left)
-			return false;
-		return find(x, root->left);
-	}
-	if (x > root->value)
-	{
-		if (!root->right)
-			return false;
-		return find(x, root->right);
-	}
+	return sum;
 }
 
+template < typename T >
+T sum(set<T> a)
+{
+	T sum = T();
+	for (auto e : a)
+	{
+		sum += e;
+	}
+	return sum;
+}
 
 int main()
 {
-	
+	set<int> s = { 1, 4, 3 };
+	cout << sum(s);
 }
