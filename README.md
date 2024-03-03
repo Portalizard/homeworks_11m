@@ -1,2 +1,1 @@
-# test_repos
-Readme file
+/html, /res and set_card_server have to be in /.venv.

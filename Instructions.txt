@@ -1,0 +1,4 @@
+127.0.0.1:5042/test - dev testing
+
+127.0.0.1:5042/set_my_date?day=X&month=Y - X,Y integers; enter your date of birth (or something else). Day and month values are stored withing a server.
+127.0.0.1:5042/daily_card - visit after setting day and month to see your set-card of the day!
